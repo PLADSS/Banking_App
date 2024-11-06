@@ -1,6 +1,6 @@
 "use server";
 
-import { Client, Account, Databases, Users } from "node-appwrite";
+import { Client, Account, Databases, Users,  } from "node-appwrite";
 import { cookies } from "next/headers";
 
 export async function createSessionClient() {
@@ -8,9 +8,12 @@ export async function createSessionClient() {
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-  const session = cookies().get("appwrite-session");
+  const cookiesResult = await cookies();
+  console.log("Cookies received:", cookiesResult);  // Log cookies to debug
+  const session = cookiesResult.get("appwrite-session");
 
   if (!session || !session.value) {
+    console.error("Session cookie is missing or empty");
     throw new Error("No session");
   }
 
@@ -38,7 +41,6 @@ export async function createAdminClient() {
     },
     get user() {
       return new Users(client);
-    }
-  };
-}
+  },
+}}
 
